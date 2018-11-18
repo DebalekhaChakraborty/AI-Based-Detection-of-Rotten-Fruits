@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="page-shell">
+        <section class="project-card result-card">
+            <p class="project-label">AI-Based Fruit Quality Detection Using CNN</p>
+            <h1>Prediction Result</h1>
+
+            <img class="uploaded-image" src="{{ image_url }}" alt="Uploaded fruit image">
+
+            <dl class="prediction-details">
+                <div><dt>Fruit</dt><dd>{{ result.fruit }}</dd></div>
+                <div><dt>Condition</dt><dd>{{ result.condition }}</dd></div>
+                <div><dt>Prediction</dt><dd>{{ result.prediction }}</dd></div>
+                <div><dt>Confidence</dt><dd>{{ '%.2f'|format(result.confidence) }}%</dd></div>
+            </dl>
+
+            <a class="secondary-button" href="{{ url_for('index') }}">Classify Another Image</a>
+            <p class="safety-note">
+                The result describes visible appearance only and is not a food-safety assessment.
+            </p>
+        </section>
+    </main>
+</body>
+</html>
+
