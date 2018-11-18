@@ -31,7 +31,7 @@ def load_trained_model(model_path_string):
         )
     from tensorflow.keras.models import load_model
 
-    return load_model(str(model_path))
+    return load_model(str(model_path), compile=False)
 
 
 def label_details(class_name):
