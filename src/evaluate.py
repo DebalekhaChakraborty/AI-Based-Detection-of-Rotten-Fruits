@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 
@@ -28,9 +29,9 @@ def evaluate(args):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     import numpy as np
-    from sklearn.metrics import ConfusionMatrixDisplay, classification_report, confusion_matrix
-    from tensorflow.keras.models import load_model
-    from tensorflow.keras.preprocessing.image import ImageDataGenerator
+    from sklearn.metrics import classification_report, confusion_matrix
+    from keras.models import load_model
+    from keras.preprocessing.image import ImageDataGenerator
     test_data = ImageDataGenerator(rescale=1.0 / 255)
     test_generator = test_data.flow_from_directory(
         str(test_directory),
@@ -47,8 +48,12 @@ def evaluate(args):
         )
 
     model = load_model(str(args.model))
-    test_loss, test_accuracy = model.evaluate(test_generator, verbose=1)
-    probabilities = model.predict(test_generator, verbose=1)
+    steps = max(1, int(math.ceil(test_generator.samples / float(args.batch_size))))
+    test_generator.reset()
+    test_loss, test_accuracy = model.evaluate_generator(test_generator, steps=steps)
+    test_generator.reset()
+    probabilities = model.predict_generator(test_generator, steps=steps, verbose=1)
+    probabilities = probabilities[: test_generator.samples]
     predicted_classes = np.argmax(probabilities, axis=1)
     true_classes = test_generator.classes
     ordered_names = [
@@ -65,14 +70,29 @@ def evaluate(args):
             predicted_classes,
             labels=labels,
             target_names=ordered_names,
-            zero_division=0,
         )
     )
 
     matrix = confusion_matrix(true_classes, predicted_classes, labels=labels)
     figure, axis = plt.subplots(figsize=(9, 8))
-    display = ConfusionMatrixDisplay(matrix, display_labels=ordered_names)
-    display.plot(ax=axis, cmap="Blues", xticks_rotation=45, colorbar=False)
+    axis.imshow(matrix, interpolation="nearest", cmap="Blues")
+    axis.set_xticks(labels)
+    axis.set_yticks(labels)
+    axis.set_xticklabels(ordered_names, rotation=45, ha="right")
+    axis.set_yticklabels(ordered_names)
+    axis.set_xlabel("Predicted label")
+    axis.set_ylabel("True label")
+    threshold = matrix.max() / 2.0 if matrix.max() > 0 else 0.5
+    for row in range(matrix.shape[0]):
+        for column in range(matrix.shape[1]):
+            axis.text(
+                column,
+                row,
+                format(matrix[row, column], "d"),
+                ha="center",
+                va="center",
+                color="white" if matrix[row, column] > threshold else "black",
+            )
     axis.set_title("Fruit Freshness Classification Confusion Matrix")
     figure.tight_layout()
     args.output_directory.mkdir(parents=True, exist_ok=True)

@@ -29,7 +29,7 @@ def load_trained_model(model_path_string):
         raise FileNotFoundError(
             "Trained model not found: {}. Run python src/train.py first.".format(model_path)
         )
-    from tensorflow.keras.models import load_model
+    from keras.models import load_model
 
     return load_model(str(model_path), compile=False)
 
@@ -59,7 +59,7 @@ def predict_image(image_path, model_path=DEFAULT_MODEL, mapping_path=DEFAULT_MAP
 
     class_names = load_class_names(mapping_path)
     import numpy as np
-    from tensorflow.keras.utils import img_to_array, load_img
+    from keras.preprocessing.image import img_to_array, load_img
 
     model = load_trained_model(str(model_path.resolve()))
     image = load_img(str(image_path), target_size=(150, 150), color_mode="rgb")

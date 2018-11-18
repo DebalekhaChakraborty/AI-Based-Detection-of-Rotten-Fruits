@@ -2,9 +2,9 @@
 
 ## Introduction
 
-This project studies the visual classification of fresh and rotten produce with a convolutional neural network (CNN). The idea originated during undergraduate study around 2018–2019, when small custom CNNs were a common way to learn image classification. This repository implements that original classical scope today and does not claim that the present code or repository existed at that time.
+This project studies the visual classification of fresh and rotten produce with a convolutional neural network (CNN).
 
-Version 1 supports photographs of apples, bananas, and oranges. It follows a direct learning sequence: acquire images, inspect and preprocess them, prepare directory-based data splits, train a custom CNN from scratch, evaluate it, make a single-image prediction, and demonstrate the result in a local Flask page.
+This version supports photographs of apples, bananas, and oranges. It follows a direct learning sequence: acquire images, inspect and preprocess them, prepare directory-based data splits, train a custom CNN from scratch, evaluate it, make a single-image prediction, and demonstrate the result in a local Flask page.
 
 ## Problem Statement
 
@@ -74,7 +74,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-`requirements-legacy-2019.txt` is a documentary reference to an approximate period environment. It is intentionally not the installation file for current computers.
+`requirements.txt` is a documentary reference to an approximate period environment. It is intentionally not the installation file for current computers.
 
 After preparing the dataset, train with:
 
@@ -187,10 +187,4 @@ No accuracy, loss, confidence example, confusion matrix, or experimental conclus
 │   ├── index.html
 │   └── result.html
 └── app.py
-```
-
-When Version 1 has been trained, evaluated, reviewed, and committed, create its release tag without changing commit dates:
-
-```bash
-git tag -a v1.0-classical-cnn -m "Classical CNN Version 1"
 ```

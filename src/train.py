@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 
@@ -32,8 +33,8 @@ def require_class_directories(directory):
 
 
 def build_model():
-    from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
-    from tensorflow.keras.models import Sequential
+    from keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
+    from keras.models import Sequential
 
     model = Sequential(
         [
@@ -64,8 +65,8 @@ def save_training_plots(history, output_directory):
     output_directory.mkdir(parents=True, exist_ok=True)
 
     plt.figure(figsize=(8, 5))
-    plt.plot(history.history["accuracy"], label="Training Accuracy")
-    plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
+    plt.plot(history.history["acc"], label="Training Accuracy")
+    plt.plot(history.history["val_acc"], label="Validation Accuracy")
     plt.title("Training and Validation Accuracy")
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy")
@@ -92,7 +93,7 @@ def train(args):
     require_class_directories(train_directory)
     require_class_directories(validation_directory)
 
-    from tensorflow.keras.preprocessing.image import ImageDataGenerator
+    from keras.preprocessing.image import ImageDataGenerator
 
     training_data = ImageDataGenerator(
         rescale=1.0 / 255,
@@ -133,10 +134,14 @@ def train(args):
 
     model = build_model()
     model.summary()
-    history = model.fit(
+    steps_per_epoch = max(1, int(math.ceil(training_generator.samples / float(args.batch_size))))
+    validation_steps = max(1, int(math.ceil(validation_generator.samples / float(args.batch_size))))
+    history = model.fit_generator(
         training_generator,
+        steps_per_epoch=steps_per_epoch,
         epochs=args.epochs,
         validation_data=validation_generator,
+        validation_steps=validation_steps,
     )
 
     args.model_directory.mkdir(parents=True, exist_ok=True)
