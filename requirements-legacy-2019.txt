@@ -1,0 +1,13 @@
+# Documentary reference only: approximate late-2018 / early-2019 environment.
+# These versions are obsolete and may not install on a current Python interpreter.
+tensorflow==1.13.1
+Keras==2.2.4
+h5py==2.9.0
+opencv-python==3.4.5.20
+numpy==1.16.2
+matplotlib==3.0.3
+scikit-learn==0.20.3
+Flask==1.0.2
+Pillow==5.4.1
+jupyter==1.0.0
+
