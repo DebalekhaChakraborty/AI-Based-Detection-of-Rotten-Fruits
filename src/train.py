@@ -6,14 +6,29 @@ from pathlib import Path
 
 
 IMAGE_SIZE = (150, 150)
+CLASS_NAMES = {
+    "fresh_apple",
+    "rotten_apple",
+    "fresh_banana",
+    "rotten_banana",
+    "fresh_orange",
+    "rotten_orange",
+}
 
 
 def require_class_directories(directory):
     if not directory.is_dir():
         raise FileNotFoundError("Dataset directory does not exist: {}".format(directory))
-    class_directories = [path for path in directory.iterdir() if path.is_dir()]
-    if not class_directories:
-        raise FileNotFoundError("No class directories found in: {}".format(directory))
+    class_names = {path.name for path in directory.iterdir() if path.is_dir()}
+    if class_names != CLASS_NAMES:
+        missing = sorted(CLASS_NAMES - class_names)
+        unexpected = sorted(class_names - CLASS_NAMES)
+        details = []
+        if missing:
+            details.append("missing: {}".format(", ".join(missing)))
+        if unexpected:
+            details.append("unexpected: {}".format(", ".join(unexpected)))
+        raise ValueError("Invalid classes in {} ({})".format(directory, "; ".join(details)))
 
 
 def build_model():
@@ -72,12 +87,12 @@ def save_training_plots(history, output_directory):
 
 
 def train(args):
-    from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
     train_directory = args.dataset / "train"
     validation_directory = args.dataset / "validation"
     require_class_directories(train_directory)
     require_class_directories(validation_directory)
+
+    from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
     training_data = ImageDataGenerator(
         rescale=1.0 / 255,
@@ -168,4 +183,3 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

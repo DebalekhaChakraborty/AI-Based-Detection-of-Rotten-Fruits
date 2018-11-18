@@ -5,8 +5,6 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
-import numpy as np
-
 
 DEFAULT_MODEL = Path("model/fruit_freshness_cnn.h5")
 DEFAULT_MAPPING = Path("model/class_indices.json")
@@ -26,13 +24,13 @@ def load_class_names(mapping_path):
 
 @lru_cache(maxsize=4)
 def load_trained_model(model_path_string):
-    from tensorflow.keras.models import load_model
-
     model_path = Path(model_path_string)
     if not model_path.is_file():
         raise FileNotFoundError(
             "Trained model not found: {}. Run python src/train.py first.".format(model_path)
         )
+    from tensorflow.keras.models import load_model
+
     return load_model(str(model_path))
 
 
@@ -49,15 +47,20 @@ def label_details(class_name):
 
 
 def predict_image(image_path, model_path=DEFAULT_MODEL, mapping_path=DEFAULT_MAPPING):
-    from tensorflow.keras.utils import img_to_array, load_img
-
     image_path = Path(image_path)
     model_path = Path(model_path)
     mapping_path = Path(mapping_path)
     if not image_path.is_file():
         raise FileNotFoundError("Image not found: {}".format(image_path))
+    if not model_path.is_file():
+        raise FileNotFoundError(
+            "Trained model not found: {}. Run python src/train.py first.".format(model_path)
+        )
 
     class_names = load_class_names(mapping_path)
+    import numpy as np
+    from tensorflow.keras.utils import img_to_array, load_img
+
     model = load_trained_model(str(model_path.resolve()))
     image = load_img(str(image_path), target_size=(150, 150), color_mode="rgb")
     image_array = img_to_array(image).astype("float32") / 255.0
@@ -104,4 +107,3 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -4,8 +4,6 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
-
 
 def load_mapping(mapping_path):
     if not mapping_path.is_file():
@@ -18,21 +16,21 @@ def load_mapping(mapping_path):
 
 
 def evaluate(args):
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from sklearn.metrics import ConfusionMatrixDisplay, classification_report, confusion_matrix
-    from tensorflow.keras.models import load_model
-    from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
     test_directory = args.dataset / "test"
     if not test_directory.is_dir():
         raise FileNotFoundError("Test dataset not found: {}".format(test_directory))
     if not args.model.is_file():
         raise FileNotFoundError("Trained model not found: {}".format(args.model))
-
     saved_mapping = load_mapping(args.mapping)
+
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from sklearn.metrics import ConfusionMatrixDisplay, classification_report, confusion_matrix
+    from tensorflow.keras.models import load_model
+    from tensorflow.keras.preprocessing.image import ImageDataGenerator
     test_data = ImageDataGenerator(rescale=1.0 / 255)
     test_generator = test_data.flow_from_directory(
         str(test_directory),

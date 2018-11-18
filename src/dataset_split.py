@@ -31,9 +31,12 @@ def validate_source(source):
     if missing:
         raise ValueError("Missing source class directories: " + ", ".join(missing))
 
-    empty = [name for name in CLASS_NAMES if not image_files(source / name)]
-    if empty:
-        raise ValueError("No supported images found in: " + ", ".join(empty))
+    too_small = [name for name in CLASS_NAMES if len(image_files(source / name)) < 7]
+    if too_small:
+        raise ValueError(
+            "Each class needs at least 7 images for non-empty 70/15/15 splits. "
+            "Too few images in: " + ", ".join(too_small)
+        )
 
 
 def validate_destination(output):
@@ -123,4 +126,3 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
