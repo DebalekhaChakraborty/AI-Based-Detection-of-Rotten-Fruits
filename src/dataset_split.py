@@ -1,9 +1,9 @@
 """Split class directories into reproducible training, validation, and test sets."""
 
 import argparse
+import os
 import random
 import shutil
-from pathlib import Path
 
 
 CLASS_NAMES = (
@@ -14,24 +14,31 @@ CLASS_NAMES = (
     "fresh_orange",
     "rotten_orange",
 )
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff"}
+IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff")
 
 
 def image_files(directory):
     """Return supported images in a stable order."""
+    if not os.path.isdir(directory):
+        return []
     return sorted(
-        path
-        for path in directory.iterdir()
-        if path.is_file() and path.suffix.lower() in IMAGE_EXTENSIONS
+        os.path.join(directory, name)
+        for name in os.listdir(directory)
+        if os.path.isfile(os.path.join(directory, name))
+        and os.path.splitext(name)[1].lower() in IMAGE_EXTENSIONS
     )
 
 
 def validate_source(source):
-    missing = [name for name in CLASS_NAMES if not (source / name).is_dir()]
+    missing = [
+        name for name in CLASS_NAMES if not os.path.isdir(os.path.join(source, name))
+    ]
     if missing:
         raise ValueError("Missing source class directories: " + ", ".join(missing))
 
-    too_small = [name for name in CLASS_NAMES if len(image_files(source / name)) < 7]
+    too_small = [
+        name for name in CLASS_NAMES if len(image_files(os.path.join(source, name))) < 7
+    ]
     if too_small:
         raise ValueError(
             "Each class needs at least 7 images for non-empty 70/15/15 splits. "
@@ -42,8 +49,8 @@ def validate_source(source):
 def validate_destination(output):
     for split_name in ("train", "validation", "test"):
         for class_name in CLASS_NAMES:
-            destination = output / split_name / class_name
-            if destination.is_dir() and image_files(destination):
+            destination = os.path.join(output, split_name, class_name)
+            if os.path.isdir(destination) and image_files(destination):
                 raise ValueError(
                     "Destination already contains split images: {}. "
                     "Choose an empty output directory.".format(destination)
@@ -60,8 +67,8 @@ def split_dataset(source, output, train_ratio=0.70, validation_ratio=0.15, seed=
     if train_ratio <= 0 or validation_ratio < 0 or train_ratio + validation_ratio >= 1:
         raise ValueError("Ratios must leave positive portions for training and testing.")
 
-    source = source.resolve()
-    output = output.resolve()
+    source = os.path.abspath(source)
+    output = os.path.abspath(output)
     validate_source(source)
     validate_destination(output)
 
@@ -69,7 +76,7 @@ def split_dataset(source, output, train_ratio=0.70, validation_ratio=0.15, seed=
     totals = {"train": 0, "validation": 0, "test": 0}
 
     for class_name in CLASS_NAMES:
-        files = image_files(source / class_name)
+        files = image_files(os.path.join(source, class_name))
         random_generator.shuffle(files)
         train_count, validation_count, _ = split_counts(
             len(files), train_ratio, validation_ratio
@@ -82,10 +89,13 @@ def split_dataset(source, output, train_ratio=0.70, validation_ratio=0.15, seed=
 
         print("{} ({} images)".format(class_name, len(files)))
         for split_name, split_files in grouped_files.items():
-            destination = output / split_name / class_name
-            destination.mkdir(parents=True, exist_ok=True)
+            destination = os.path.join(output, split_name, class_name)
+            if not os.path.isdir(destination):
+                os.makedirs(destination)
             for source_file in split_files:
-                shutil.copy2(str(source_file), str(destination / source_file.name))
+                shutil.copy2(
+                    source_file, os.path.join(destination, os.path.basename(source_file))
+                )
             totals[split_name] += len(split_files)
             print("  {:10s}: {}".format(split_name, len(split_files)))
 
@@ -98,9 +108,9 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Create a deterministic directory-based image dataset split."
     )
-    parser.add_argument("source", type=Path, help="Directory containing six class folders")
+    parser.add_argument("source", help="Directory containing six class folders")
     parser.add_argument(
-        "--output", type=Path, default=Path("dataset"), help="Output dataset directory"
+        "--output", default="dataset", help="Output dataset directory"
     )
     parser.add_argument("--train-ratio", type=float, default=0.70)
     parser.add_argument("--validation-ratio", type=float, default=0.15)

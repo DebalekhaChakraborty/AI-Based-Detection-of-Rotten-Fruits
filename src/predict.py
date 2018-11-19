@@ -2,20 +2,20 @@
 
 import argparse
 import json
+import os
 from functools import lru_cache
-from pathlib import Path
 
 
-DEFAULT_MODEL = Path("model/fruit_freshness_cnn.h5")
-DEFAULT_MAPPING = Path("model/class_indices.json")
+DEFAULT_MODEL = "model/fruit_freshness_cnn.h5"
+DEFAULT_MAPPING = "model/class_indices.json"
 
 
 def load_class_names(mapping_path):
-    if not mapping_path.is_file():
+    if not os.path.isfile(mapping_path):
         raise FileNotFoundError(
             "Class mapping not found: {}. Train the model first.".format(mapping_path)
         )
-    with mapping_path.open("r", encoding="utf-8") as mapping_file:
+    with open(mapping_path, "r", encoding="utf-8") as mapping_file:
         class_indices = json.load(mapping_file)
     if not isinstance(class_indices, dict) or len(class_indices) != 6:
         raise ValueError("Class mapping must contain exactly six classes.")
@@ -23,15 +23,14 @@ def load_class_names(mapping_path):
 
 
 @lru_cache(maxsize=4)
-def load_trained_model(model_path_string):
-    model_path = Path(model_path_string)
-    if not model_path.is_file():
+def load_trained_model(model_path):
+    if not os.path.isfile(model_path):
         raise FileNotFoundError(
             "Trained model not found: {}. Run python src/train.py first.".format(model_path)
         )
     from keras.models import load_model
 
-    return load_model(str(model_path), compile=False)
+    return load_model(model_path, compile=False)
 
 
 def label_details(class_name):
@@ -47,23 +46,21 @@ def label_details(class_name):
 
 
 def predict_image(image_path, model_path=DEFAULT_MODEL, mapping_path=DEFAULT_MAPPING):
-    image_path = Path(image_path)
-    model_path = Path(model_path)
-    mapping_path = Path(mapping_path)
-    if not image_path.is_file():
+    if not os.path.isfile(image_path):
         raise FileNotFoundError("Image not found: {}".format(image_path))
-    if not model_path.is_file():
+    if not os.path.isfile(model_path):
         raise FileNotFoundError(
             "Trained model not found: {}. Run python src/train.py first.".format(model_path)
         )
 
     class_names = load_class_names(mapping_path)
     import numpy as np
-    from keras.preprocessing.image import img_to_array, load_img
+    from keras.preprocessing.image import img_to_array
+    from keras.preprocessing.image import load_img
 
-    model = load_trained_model(str(model_path.resolve()))
-    image = load_img(str(image_path), target_size=(150, 150), color_mode="rgb")
-    image_array = img_to_array(image).astype("float32") / 255.0
+    model = load_trained_model(os.path.abspath(model_path))
+    loaded_image = load_img(image_path, target_size=(150, 150))
+    image_array = img_to_array(loaded_image).astype("float32") / 255.0
     batch = np.expand_dims(image_array, axis=0)
     probabilities = model.predict(batch, verbose=0)[0]
     predicted_index = int(np.argmax(probabilities))
@@ -78,9 +75,9 @@ def predict_image(image_path, model_path=DEFAULT_MODEL, mapping_path=DEFAULT_MAP
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Classify one fruit image.")
-    parser.add_argument("image", type=Path, help="Path to an apple, banana, or orange image")
-    parser.add_argument("--model", type=Path, default=DEFAULT_MODEL)
-    parser.add_argument("--mapping", type=Path, default=DEFAULT_MAPPING)
+    parser.add_argument("image", help="Path to an apple, banana, or orange image")
+    parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--mapping", default=DEFAULT_MAPPING)
     return parser.parse_args()
 
 
@@ -96,7 +93,7 @@ def main():
         return 1
 
     print("\n---")
-    print("Fruit Quality Detection Using CNN\n")
+    print("AI-Based Detection of Rotten Fruits Using CNN\n")
     print("Fruit       : {}".format(result["fruit"]))
     print("Condition   : {}".format(result["condition"]))
     print("Prediction  : {}".format(result["prediction"]))

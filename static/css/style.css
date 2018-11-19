@@ -1,21 +1,11 @@
-:root {
-    --green: #315c43;
-    --green-dark: #21402f;
-    --cream: #f6f3e9;
-    --paper: #ffffff;
-    --ink: #27312b;
-    --muted: #657168;
-    --border: #ccd4ce;
-}
-
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    color: var(--ink);
-    background: var(--cream);
+    color: #27312b;
+    background: #f6f3e9;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.55;
 }
@@ -29,17 +19,18 @@ body {
 }
 
 .project-card {
-    width: min(680px, 100%);
+    width: 680px;
+    max-width: 100%;
     padding: 42px;
-    background: var(--paper);
-    border: 1px solid var(--border);
-    border-top: 7px solid var(--green);
+    background: #ffffff;
+    border: 1px solid #ccd4ce;
+    border-top: 7px solid #315c43;
     box-shadow: 0 8px 24px rgba(30, 50, 38, 0.09);
 }
 
 .project-label {
     margin: 0 0 8px;
-    color: var(--green);
+    color: #315c43;
     font-size: 0.78rem;
     font-weight: bold;
     letter-spacing: 0.12em;
@@ -48,34 +39,35 @@ body {
 
 h1 {
     margin: 0;
-    color: var(--green-dark);
+    color: #21402f;
     font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.9rem, 5vw, 2.65rem);
+    font-size: 2.65rem;
     line-height: 1.15;
 }
 
 .introduction {
     margin: 20px 0 28px;
-    color: var(--muted);
+    color: #657168;
 }
 
 .upload-form {
-    display: grid;
-    gap: 12px;
     padding: 24px;
     background: #f8faf8;
-    border: 1px solid var(--border);
+    border: 1px solid #ccd4ce;
 }
 
 .upload-form label {
+    display: block;
+    margin-bottom: 12px;
     font-weight: bold;
 }
 
 input[type="file"] {
     width: 100%;
+    margin-bottom: 12px;
     padding: 10px;
-    background: var(--paper);
-    border: 1px solid var(--border);
+    background: #ffffff;
+    border: 1px solid #ccd4ce;
 }
 
 button,
@@ -83,8 +75,8 @@ button,
     display: inline-block;
     padding: 11px 22px;
     color: white;
-    background: var(--green);
-    border: 1px solid var(--green);
+    background: #315c43;
+    border: 1px solid #315c43;
     border-radius: 2px;
     font: inherit;
     font-weight: bold;
@@ -95,7 +87,7 @@ button,
 
 button:hover,
 .secondary-button:hover {
-    background: var(--green-dark);
+    background: #21402f;
 }
 
 .message {
@@ -108,37 +100,38 @@ button:hover,
 
 .uploaded-image {
     display: block;
-    width: min(360px, 100%);
+    width: 100%;
+    max-width: 360px;
     max-height: 320px;
     margin: 26px auto;
     object-fit: contain;
-    border: 1px solid var(--border);
+    border: 1px solid #ccd4ce;
 }
 
 .prediction-details {
     margin: 24px 0;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid #ccd4ce;
 }
 
 .prediction-details div {
-    display: grid;
-    grid-template-columns: 130px 1fr;
-    gap: 12px;
+    display: flex;
     padding: 11px 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid #ccd4ce;
 }
 
 .prediction-details dt {
+    width: 130px;
     font-weight: bold;
 }
 
 .prediction-details dd {
+    flex: 1;
     margin: 0;
 }
 
 .safety-note {
     margin: 24px 0 0;
-    color: var(--muted);
+    color: #657168;
     font-size: 0.82rem;
 }
 
@@ -147,8 +140,15 @@ button:hover,
         padding: 28px 20px;
     }
 
+    h1 {
+        font-size: 1.9rem;
+    }
+
     .prediction-details div {
-        grid-template-columns: 1fr;
-        gap: 2px;
+        display: block;
+    }
+
+    .prediction-details dt {
+        width: auto;
     }
 }

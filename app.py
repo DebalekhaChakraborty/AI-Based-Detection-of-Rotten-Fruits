@@ -1,6 +1,6 @@
 """Small Flask demonstration for the trained fruit freshness CNN."""
 
-from pathlib import Path
+import os
 from uuid import uuid4
 
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -9,10 +9,10 @@ from werkzeug.utils import secure_filename
 from src.predict import predict_image
 
 
-BASE_DIRECTORY = Path(__file__).resolve().parent
-UPLOAD_DIRECTORY = BASE_DIRECTORY / "static" / "uploads"
-MODEL_PATH = BASE_DIRECTORY / "model" / "fruit_freshness_cnn.h5"
-MAPPING_PATH = BASE_DIRECTORY / "model" / "class_indices.json"
+BASE_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_DIRECTORY = os.path.join(BASE_DIRECTORY, "static", "uploads")
+MODEL_PATH = os.path.join(BASE_DIRECTORY, "model", "fruit_freshness_cnn.h5")
+MAPPING_PATH = os.path.join(BASE_DIRECTORY, "model", "class_indices.json")
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "bmp"}
 
 app = Flask(__name__)
@@ -39,14 +39,16 @@ def index():
 
     original_name = secure_filename(uploaded_file.filename)
     stored_name = "{}_{}".format(uuid4().hex, original_name)
-    UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
-    image_path = UPLOAD_DIRECTORY / stored_name
-    uploaded_file.save(str(image_path))
+    if not os.path.isdir(UPLOAD_DIRECTORY):
+        os.makedirs(UPLOAD_DIRECTORY)
+    image_path = os.path.join(UPLOAD_DIRECTORY, stored_name)
+    uploaded_file.save(image_path)
 
     try:
         result = predict_image(image_path, MODEL_PATH, MAPPING_PATH)
     except (FileNotFoundError, ModuleNotFoundError, OSError, ValueError) as error:
-        image_path.unlink(missing_ok=True)
+        if os.path.isfile(image_path):
+            os.remove(image_path)
         flash(str(error))
         return redirect(url_for("index"))
 

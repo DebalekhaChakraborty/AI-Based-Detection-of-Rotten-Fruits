@@ -12,11 +12,9 @@ dataset/train/
 dataset/validation/
 dataset/test/
 model/*.h5
-model/*.keras
 model/class_indices.json
 outputs/*.png
 static/uploads/*
 !static/uploads/.gitkeep
 
 .DS_Store
-

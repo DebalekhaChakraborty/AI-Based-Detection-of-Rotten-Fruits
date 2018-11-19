@@ -3,13 +3,13 @@
 import argparse
 import json
 import math
-from pathlib import Path
+import os
 
 
 def load_mapping(mapping_path):
-    if not mapping_path.is_file():
+    if not os.path.isfile(mapping_path):
         raise FileNotFoundError("Class mapping not found: {}".format(mapping_path))
-    with mapping_path.open("r", encoding="utf-8") as mapping_file:
+    with open(mapping_path, "r", encoding="utf-8") as mapping_file:
         mapping = json.load(mapping_file)
     if not isinstance(mapping, dict) or len(mapping) != 6:
         raise ValueError("Class mapping must contain exactly six classes.")
@@ -17,10 +17,10 @@ def load_mapping(mapping_path):
 
 
 def evaluate(args):
-    test_directory = args.dataset / "test"
-    if not test_directory.is_dir():
+    test_directory = os.path.join(args.dataset, "test")
+    if not os.path.isdir(test_directory):
         raise FileNotFoundError("Test dataset not found: {}".format(test_directory))
-    if not args.model.is_file():
+    if not os.path.isfile(args.model):
         raise FileNotFoundError("Trained model not found: {}".format(args.model))
     saved_mapping = load_mapping(args.mapping)
 
@@ -34,7 +34,7 @@ def evaluate(args):
     from keras.preprocessing.image import ImageDataGenerator
     test_data = ImageDataGenerator(rescale=1.0 / 255)
     test_generator = test_data.flow_from_directory(
-        str(test_directory),
+        test_directory,
         target_size=(150, 150),
         batch_size=args.batch_size,
         class_mode="categorical",
@@ -47,7 +47,7 @@ def evaluate(args):
             "Test class directories do not match model/class_indices.json."
         )
 
-    model = load_model(str(args.model))
+    model = load_model(args.model)
     steps = max(1, int(math.ceil(test_generator.samples / float(args.batch_size))))
     test_generator.reset()
     test_loss, test_accuracy = model.evaluate_generator(test_generator, steps=steps)
@@ -74,18 +74,17 @@ def evaluate(args):
     )
 
     matrix = confusion_matrix(true_classes, predicted_classes, labels=labels)
-    figure, axis = plt.subplots(figsize=(9, 8))
-    axis.imshow(matrix, interpolation="nearest", cmap="Blues")
-    axis.set_xticks(labels)
-    axis.set_yticks(labels)
-    axis.set_xticklabels(ordered_names, rotation=45, ha="right")
-    axis.set_yticklabels(ordered_names)
-    axis.set_xlabel("Predicted label")
-    axis.set_ylabel("True label")
+    plt.figure(figsize=(9, 8))
+    plt.imshow(matrix, interpolation="nearest", cmap="Blues")
+    plt.title("Fruit Freshness Classification Confusion Matrix")
+    plt.colorbar()
+    tick_marks = np.arange(len(ordered_names))
+    plt.xticks(tick_marks, ordered_names, rotation=45)
+    plt.yticks(tick_marks, ordered_names)
     threshold = matrix.max() / 2.0 if matrix.max() > 0 else 0.5
     for row in range(matrix.shape[0]):
         for column in range(matrix.shape[1]):
-            axis.text(
+            plt.text(
                 column,
                 row,
                 format(matrix[row, column], "d"),
@@ -93,21 +92,23 @@ def evaluate(args):
                 va="center",
                 color="white" if matrix[row, column] > threshold else "black",
             )
-    axis.set_title("Fruit Freshness Classification Confusion Matrix")
-    figure.tight_layout()
-    args.output_directory.mkdir(parents=True, exist_ok=True)
-    output_path = args.output_directory / "confusion_matrix.png"
-    figure.savefig(output_path)
-    plt.close(figure)
+    plt.ylabel("True label")
+    plt.xlabel("Predicted label")
+    plt.tight_layout()
+    if not os.path.isdir(args.output_directory):
+        os.makedirs(args.output_directory)
+    output_path = os.path.join(args.output_directory, "confusion_matrix.png")
+    plt.savefig(output_path)
+    plt.close()
     print("Saved confusion matrix: {}".format(output_path))
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Evaluate the CNN on held-out test images.")
-    parser.add_argument("--dataset", type=Path, default=Path("dataset"))
-    parser.add_argument("--model", type=Path, default=Path("model/fruit_freshness_cnn.h5"))
-    parser.add_argument("--mapping", type=Path, default=Path("model/class_indices.json"))
-    parser.add_argument("--output-directory", type=Path, default=Path("outputs"))
+    parser.add_argument("--dataset", default="dataset")
+    parser.add_argument("--model", default="model/fruit_freshness_cnn.h5")
+    parser.add_argument("--mapping", default="model/class_indices.json")
+    parser.add_argument("--output-directory", default="outputs")
     parser.add_argument("--batch-size", type=int, default=32)
     return parser.parse_args()
 
