@@ -153,9 +153,17 @@ The selected package releases all predate the cutoff:
 
 ## Verification Boundary
 
-An exact CPython 3.6.7 interpreter was built from the October 20, 2018 source release on the current Debian 12 host. Package installation did not complete because importing `ctypes` segfaulted in `ctypes._reset_cache`. The first build linked the host's libffi 3.4.4. A second clean interpreter build linked libffi 3.2.1, confirmed by `ldd`, but failed at the same location while `make install` invoked `ensurepip`. This is a current host/toolchain binary-compatibility blocker, not permission to replace any historical package or interpreter version.
+Runtime validation completed in a disposable Ubuntu 18.04.5 LTS amd64 environment with an isolated, writable, tmpfs-backed `/dev/shm`. A direct C probe completed `sem_open`, `sem_close`, and `sem_unlink`. CPython 3.6.7 was then configured with `HAVE_SEM_OPEN` and `HAVE_SEM_UNLINK`; direct `_multiprocessing.SemLock` import and `multiprocessing.Semaphore(1)` construction both passed.
 
-Because the canonical environment did not install successfully, the conditional synthetic-data smoke test was not started. Therefore imports, dataset splitting, model construction, one-epoch training, HDF5 save/reload, evaluation, prediction, and Flask integration remain runtime-unverified. No source image dataset, generated split, HDF5 model, class mapping, synthetic image, or measured output was added, and the experiment log remains intentionally empty.
+The unchanged `requirements.txt` installed exactly 71 expected packages with no missing, mismatched, or unexpected distributions, and `pip check` reported no broken requirements. Imports passed for scikit-learn 0.20.0, TensorFlow 1.12.0, standalone Keras 2.2.4, and the complete pinned import surface.
+
+The repository splitter passed against temporary synthetic six-class images outside the repository. It created non-empty train, validation, and test directories for all six classes, and two runs with seed 42 produced identical manifests. The unchanged CNN constructed successfully with 4,829,126 parameters; `ImageDataGenerator`, `flow_from_directory`, `model.summary`, and one epoch of `fit_generator` with batch size 32 completed.
+
+Temporary smoke artifacts included the HDF5 model, exact six-class mapping, accuracy and loss plots, and confusion-matrix plot. HDF5 reload passed. The unchanged evaluation path completed `evaluate_generator`, `predict_generator`, `classification_report`, and `confusion_matrix`. CLI prediction produced Fruit, Condition, Prediction, and Confidence fields. Flask test-client GET `/` and model-backed image POST `/` both passed. Notebook Python 3.6 metadata, setup constants, and import cells were consistent with the frozen environment.
+
+All temporary images, splits, models, mappings, plots, and uploads were deleted with the disposable environment. The repository contained no smoke artifacts after cleanup, and `EXPERIMENTS.md` remained unchanged.
+
+Smoke validation establishes runtime/software compatibility only. Synthetic data results are not model-performance evidence.
 
 ## Verdict
 
