@@ -5,6 +5,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 .venv/
+.venv-v2/
 venv/
 .env
 
@@ -18,3 +19,14 @@ static/uploads/*
 !static/uploads/.gitkeep
 
 .DS_Store
+
+# V2 local research data and large model artifacts
+v2/data/raw/*
+!v2/data/raw/.gitkeep
+v2/data/processed/*
+!v2/data/processed/.gitkeep
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+wandb/

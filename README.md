@@ -6,6 +6,27 @@ This project studies the visual classification of fresh and rotten fruit with a 
 
 The complete pipeline covers provenance and integrity auditing, exploratory analysis, leakage-aware splitting, CNN training, evaluation, single-image prediction, and a local Flask demonstration. V1 has now been genuinely trained and evaluated while keeping the third-party dataset and large model binary outside Git.
 
+## Project Evolution
+
+### V1 — Classical Deep Learning (2018)
+
+V1 is the completed historical study, **AI-Based Fruit Freshness Classification Using CNN (2018)**. It uses a custom CNN trained from scratch with TensorFlow 1.x, standalone Keras 2.2.4, and OpenCV. The `legacy` branch freezes its implementation, environment, genuine experiments, and documented limitations.
+
+### V2 — Modern Vision AI Research (2026)
+
+V2 is **AI-Based Fruit Freshness Intelligence Using Modern Vision AI**, a comparative research programme exploring:
+
+- Modern from-scratch CNN baselines
+- Transfer learning
+- Self-supervised vision foundation models
+- Vision-language representations
+- Multimodal reasoning and explanation assessment
+- Labelled-data efficiency and cross-domain generalization
+
+**Research in progress.** V2 currently provides the research protocol, dataset strategy, reproducibility rules, roadmap, configuration intent, and empty project structure only. No V2 model has been implemented and no V2 result is claimed.
+
+The research framework begins with [V2_RESEARCH_BLUEPRINT.md](docs/V2_RESEARCH_BLUEPRINT.md). The complete protocol is in [EXPERIMENT_PROTOCOL.md](docs/EXPERIMENT_PROTOCOL.md), and planned model cohorts are defined without results in [MODEL_COMPARISON_MATRIX.md](docs/MODEL_COMPARISON_MATRIX.md).
+
 ## Historical Runtime Contract
 
 This `legacy` version has a strict technical cutoff of November 18, 2018. Its canonical runtime is CPython 3.6.x with TensorFlow 1.12.0 and standalone Keras 2.2.4. It uses generator-specific Keras methods, the classic `acc` and `val_acc` history keys, and HDF5 model storage.
@@ -76,7 +97,7 @@ The classifier is a custom sequential CNN trained from scratch:
 
 Training uses Adam, categorical cross-entropy, and accuracy. The default batch size is 32. No pretrained model or transfer learning is used.
 
-## Installation
+## V1 Installation
 
 Create and activate a CPython 3.6 environment, then install the single canonical dependency manifest:
 
@@ -101,6 +122,18 @@ The exact environment is:
 | Flask | 1.0.2 |
 | Pillow | 5.3.0 |
 | Jupyter | 1.0.0 |
+
+## V2 Environment Boundary
+
+V2 uses a separate Python 3.11+ research environment and never installs modern packages into the V1 environment:
+
+```bash
+python3.11 -m venv .venv-v2
+source .venv-v2/bin/activate
+python -m pip install -r requirements-v2.txt
+```
+
+`requirements-v2.txt` is a bootstrap manifest for PyTorch, torchvision, timm, transformers, OpenCV, scikit-learn, pandas, NumPy, Matplotlib, Jupyter, seaborn, and Pillow. Exact resolved versions must be locked and recorded before an experiment. No V2 packages are required to inspect the research framework.
 
 ## Training
 
@@ -197,13 +230,7 @@ The real selected model also passed the unchanged CLI and Flask GET/model-backed
 
 ## Future Scope
 
-- Increase and balance the image dataset.
-- Add more fruit classes.
-- Improve robustness under varied lighting, backgrounds, and camera conditions.
-- Experiment with deeper custom CNN architectures.
-- Detect several fruit items in one scene.
-- Develop a mobile application.
-- Improve real-time camera prediction.
+V1 remains frozen. Future research is organized through the phased [V2 roadmap](docs/ROADMAP.md): research setup, modern baseline reproduction, transfer learning, foundation embeddings, vision-language reasoning, and paper preparation.
 
 ## Repository Structure
 
@@ -213,6 +240,14 @@ The real selected model also passed the unchanged CLI and Flask GET/model-backed
 ├── DATASET_PROVENANCE.md
 ├── EXPERIMENTS.md
 ├── requirements.txt
+├── requirements-v2.txt
+├── docs/
+│   ├── V2_RESEARCH_BLUEPRINT.md
+│   ├── EXPERIMENT_PROTOCOL.md
+│   ├── MODEL_COMPARISON_MATRIX.md
+│   ├── DATASET_STRATEGY.md
+│   ├── REPRODUCIBILITY_GUIDE.md
+│   └── ROADMAP.md
 ├── dataset/
 │   └── README.md
 ├── notebooks/
@@ -237,6 +272,25 @@ The real selected model also passed the unchanged CLI and Flask GET/model-backed
 │   ├── experiment_03_accuracy.png
 │   ├── experiment_03_loss.png
 │   └── final_confusion_matrix.png
+├── v2/
+│   ├── data/
+│   │   ├── raw/
+│   │   ├── processed/
+│   │   └── splits/
+│   ├── notebooks/
+│   ├── src/
+│   │   ├── datasets/
+│   │   ├── models/
+│   │   ├── training/
+│   │   ├── evaluation/
+│   │   └── visualization/
+│   ├── experiments/
+│   ├── configs/
+│   │   ├── baseline_cnn.yaml
+│   │   ├── transfer_learning.yaml
+│   │   ├── foundation_embedding.yaml
+│   │   └── vlm_evaluation.yaml
+│   └── results/
 ├── static/
 │   ├── css/style.css
 │   └── uploads/.gitkeep

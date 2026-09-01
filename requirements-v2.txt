@@ -1,0 +1,17 @@
+# V2 research bootstrap environment (Python 3.11+)
+#
+# This manifest is intentionally separate from the frozen V1 requirements.txt.
+# Resolve and record exact versions in an environment lock before each experiment.
+
+torch
+torchvision
+timm
+transformers
+opencv-python
+scikit-learn
+pandas
+numpy
+matplotlib
+jupyter
+seaborn
+Pillow

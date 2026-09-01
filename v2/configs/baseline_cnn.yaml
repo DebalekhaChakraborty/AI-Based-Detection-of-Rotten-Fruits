@@ -1,0 +1,35 @@
+schema_version: 1
+status: planned
+
+experiment:
+  id: null
+  phase: 1
+  objective: Establish a modern from-scratch CNN comparison baseline.
+
+model:
+  family: custom_cnn
+  initialization: random
+  architecture: to_be_registered
+
+data:
+  dataset_version: null
+  split_manifest: null
+  labelled_fraction: 1.0
+
+training:
+  input_size: null
+  batch_size: null
+  learning_rate: null
+  epochs: null
+  optimizer: null
+  seed: 42
+
+evaluation:
+  selection_split: validation
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - confusion_matrix
+  test_access: closed_until_selection

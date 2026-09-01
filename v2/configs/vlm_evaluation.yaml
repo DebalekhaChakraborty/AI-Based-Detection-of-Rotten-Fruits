@@ -1,0 +1,40 @@
+schema_version: 1
+status: planned
+
+experiment:
+  id: null
+  phase: 4
+  objective: Evaluate vision-language freshness reasoning and explanation quality.
+
+model:
+  family: vision_language_model
+  provider_or_architecture: to_be_selected
+  model_revision: to_be_registered
+  adaptation_mode: to_be_selected
+
+data:
+  dataset_version: null
+  split_manifest: null
+  explanation_sample_manifest: null
+
+reasoning_protocol:
+  prompt_revision: null
+  output_schema: null
+  uncertainty_instruction: null
+  human_review_rubric: null
+
+evaluation:
+  selection_split: validation
+  classification_metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - confusion_matrix
+  explanation_dimensions:
+    - visible_evidence_grounding
+    - relevance
+    - clarity
+    - uncertainty
+    - unsupported_claims
+  test_access: closed_until_selection

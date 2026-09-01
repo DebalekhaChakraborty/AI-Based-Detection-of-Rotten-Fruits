@@ -1,0 +1,36 @@
+schema_version: 1
+status: planned
+
+experiment:
+  id: null
+  phase: 3
+  objective: Evaluate fixed foundation-model representations and lightweight probes.
+
+model:
+  family: vision_foundation_model
+  architecture: to_be_selected
+  weights_revision: to_be_registered
+  adaptation_mode: frozen_embedding
+  probe: to_be_registered
+
+data:
+  dataset_version: null
+  split_manifest: null
+  labelled_fractions: []
+
+training:
+  embedding_batch_size: null
+  probe_hyperparameters: null
+  seed: 42
+
+evaluation:
+  selection_split: validation
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - confusion_matrix
+    - few_shot_performance
+    - cross_domain_generalization
+  test_access: closed_until_selection

@@ -1,0 +1,40 @@
+schema_version: 1
+status: planned
+
+experiment:
+  id: null
+  phase: 2
+  objective: Compare pretrained convolutional features with from-scratch baselines.
+
+model:
+  family: transfer_learning_cnn
+  architecture: to_be_selected
+  pretrained_weights: to_be_registered
+  adaptation_mode: to_be_selected
+
+data:
+  dataset_version: null
+  split_manifest: null
+  labelled_fraction: null
+
+training:
+  input_size: null
+  batch_size: null
+  learning_rate: null
+  epochs: null
+  optimizer: null
+  seed: 42
+
+evaluation:
+  selection_split: validation
+  compare_against:
+    - historical_v1
+    - modern_baseline
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - confusion_matrix
+    - training_data_efficiency
+  test_access: closed_until_selection
