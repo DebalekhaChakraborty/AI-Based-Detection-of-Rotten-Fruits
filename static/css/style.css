@@ -1,0 +1,154 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: #27312b;
+    background: #f6f3e9;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.55;
+}
+
+.page-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+}
+
+.project-card {
+    width: 680px;
+    max-width: 100%;
+    padding: 42px;
+    background: #ffffff;
+    border: 1px solid #ccd4ce;
+    border-top: 7px solid #315c43;
+    box-shadow: 0 8px 24px rgba(30, 50, 38, 0.09);
+}
+
+.project-label {
+    margin: 0 0 8px;
+    color: #315c43;
+    font-size: 0.78rem;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    color: #21402f;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 2.65rem;
+    line-height: 1.15;
+}
+
+.introduction {
+    margin: 20px 0 28px;
+    color: #657168;
+}
+
+.upload-form {
+    padding: 24px;
+    background: #f8faf8;
+    border: 1px solid #ccd4ce;
+}
+
+.upload-form label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+input[type="file"] {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid #ccd4ce;
+}
+
+button,
+.secondary-button {
+    display: inline-block;
+    padding: 11px 22px;
+    color: white;
+    background: #315c43;
+    border: 1px solid #315c43;
+    border-radius: 2px;
+    font: inherit;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button:hover,
+.secondary-button:hover {
+    background: #21402f;
+}
+
+.message {
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    color: #6c3619;
+    background: #fff2e8;
+    border: 1px solid #e4b18f;
+}
+
+.uploaded-image {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    max-height: 320px;
+    margin: 26px auto;
+    object-fit: contain;
+    border: 1px solid #ccd4ce;
+}
+
+.prediction-details {
+    margin: 24px 0;
+    border-top: 1px solid #ccd4ce;
+}
+
+.prediction-details div {
+    display: flex;
+    padding: 11px 0;
+    border-bottom: 1px solid #ccd4ce;
+}
+
+.prediction-details dt {
+    width: 130px;
+    font-weight: bold;
+}
+
+.prediction-details dd {
+    flex: 1;
+    margin: 0;
+}
+
+.safety-note {
+    margin: 24px 0 0;
+    color: #657168;
+    font-size: 0.82rem;
+}
+
+@media (max-width: 520px) {
+    .project-card {
+        padding: 28px 20px;
+    }
+
+    h1 {
+        font-size: 1.9rem;
+    }
+
+    .prediction-details div {
+        display: block;
+    }
+
+    .prediction-details dt {
+        width: auto;
+    }
+}

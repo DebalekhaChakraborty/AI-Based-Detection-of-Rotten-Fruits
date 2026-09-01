@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI-Based Detection of Rotten Fruits Using CNN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="page-shell">
+        <section class="project-card">
+            <p class="project-label">Computer Vision Project</p>
+            <h1>AI-Based Detection of Rotten Fruits Using CNN</h1>
+            <p class="introduction">
+                Upload an image of an apple, banana or orange to determine its visual
+                freshness using a Convolutional Neural Network.
+            </p>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="message" role="alert">{{ messages[0] }}</div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="post" enctype="multipart/form-data" class="upload-form">
+                <label for="image">Choose Image</label>
+                <input id="image" name="image" type="file" accept=".jpg,.jpeg,.png,.bmp" required>
+                <button type="submit">Predict</button>
+            </form>
+
+            <p class="safety-note">
+                This demonstration evaluates visible appearance only. It cannot determine
+                microbiological safety and must not be used to decide whether food is safe to eat.
+            </p>
+        </section>
+    </main>
+</body>
+</html>
